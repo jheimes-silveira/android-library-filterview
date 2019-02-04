@@ -1,8 +1,7 @@
 # android-library-filterview
 
-A simple view to apply filters to your project.
+#### A simple view to apply filters to your project.
 
-#### apply video filter on generate an Mp4
 <table>
     <td><img src="previews/Screenshot_20190203-231743.png"></td>
     <td><img src="previews/Screenshot_20190203-231750.png"></td>
