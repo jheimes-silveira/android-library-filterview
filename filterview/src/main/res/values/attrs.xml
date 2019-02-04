@@ -1,0 +1,11 @@
+<resources>
+    <declare-styleable name="JSFilterView">
+        <attr name="js_hint" format="string" localization="suggested" />
+        <attr name="js_dialog_text" format="string" localization="suggested" />
+        <attr name="js_hint_color" format="color" />
+        <attr name="js_icon_filter" format="reference" />
+        <attr name="js_dialog_icon_filter" format="reference" />
+        <attr name="js_dialog_text_color" format="color" />
+        <attr name="js_dialog_background_color" format="color" />
+    </declare-styleable>
+</resources>

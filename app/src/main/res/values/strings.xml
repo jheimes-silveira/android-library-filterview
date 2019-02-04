@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">android-library-filter</string>
+    <string name="never_filter_apply">Nenhum filtro aplicado</string>
+    <string name="filters">Filtros</string>
+</resources>

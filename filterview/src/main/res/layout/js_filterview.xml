@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+    <RelativeLayout
+            android:id="@+id/rlContainerFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <ImageView
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/js_filter_variant"
+                android:padding="13dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/ivFilter"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"/>
+
+        <TextView
+                android:layout_centerVertical="true"
+                android:id="@+id/tvHint"
+                android:textSize="12dp"
+                android:alpha="0.5"
+                android:layout_toLeftOf="@id/ivFilter"
+                android:layout_alignParentStart="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toStartOf="@id/ivFilter"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+            android:layout_below="@id/rlContainerFilter"
+            android:id="@+id/rvListSelected"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+</RelativeLayout>
