@@ -1,19 +1,22 @@
 package br.com.jheimesilveira.js.filterview.view
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import br.com.jheimesilveira.js.filterview.R
 import br.com.jheimesilveira.js.filterview.adapter.AdapterListGroupItemSelected
-import br.com.jheimesilveira.js.filterview.dialog.DlgSelectItems
 import br.com.jheimesilveira.js.filterview.dto.JSGroupFilterModel
 import br.com.jheimesilveira.js.filterview.dto.JSItemFilterModel
 import br.com.jheimesilveira.js.filterview.dto.Params
+import br.com.jheimesilveira.js.filterview.dto.ParamsSelectItems
 import br.com.jheimesilveira.js.filterview.util.Util
 import kotlinx.android.synthetic.main.js_act_list_select_filter.*
 
@@ -44,7 +47,7 @@ class JSActListSelectFilter : AppCompatActivity() {
             when (itemGroup.value.type) {
                 JSGroupFilterModel.Type.LINEAR -> {
                     generateViewLinear(itemGroup.value,
-                        params!!.listDataSetFilterSelected[itemGroup.index])
+                        params!!.listDataSetFilterSelected[itemGroup.index], itemGroup.index)
                 }
                 JSGroupFilterModel.Type.GRID -> {
                     generateViewGrid(itemGroup.value,
@@ -90,6 +93,7 @@ class JSActListSelectFilter : AppCompatActivity() {
 
         adapterListSelected.onChangeListener { selecteds ->
             itemGroupSelected.dataSet = selecteds
+            Params.finishListener?.invoke(params!!)
         }
 
         llContainerBody.addView(view)
@@ -97,7 +101,8 @@ class JSActListSelectFilter : AppCompatActivity() {
 
     private fun generateViewLinear(
         itemGroup: JSGroupFilterModel,
-        itemGroupSelected: JSGroupFilterModel
+        itemGroupSelected: JSGroupFilterModel,
+        indexGroup: Int
     ) {
         val view =
             LayoutInflater.from(this@JSActListSelectFilter).inflate(R.layout.js_item_group_selected_linear, null, false)
@@ -110,18 +115,30 @@ class JSActListSelectFilter : AppCompatActivity() {
 
         (view.findViewById(R.id.llContainerBodyItemGroupSelectedLinear) as LinearLayout)
             .setOnClickListener {
-                val dlg = DlgSelectItems<JSItemFilterModel>(this@JSActListSelectFilter)
-                dlg.show(
-                    title = itemGroup.title,
-                    dataSet = itemGroup.dataSet,
-                    dataSetSelected = itemGroupSelected.dataSet,
-                    multiple = itemGroup.multiple,
-                    colorPrimary = params!!.colorBackground)
+                val intent = Intent(this@JSActListSelectFilter, ActSelectItems::class.java)
 
-                dlg.onItemsSelected { items ->
-                    itemGroupSelected.dataSet = items
-                    initItemsExists(ivItemExists, tvTitle, itemGroupSelected)
-                }
+                val paramsSelectItems = ParamsSelectItems()
+                paramsSelectItems.title = itemGroup.title
+                paramsSelectItems.dataSet = itemGroup.dataSet
+                paramsSelectItems.dataSetSelected = itemGroupSelected.dataSet
+                paramsSelectItems.multiple = itemGroup.multiple
+                paramsSelectItems.colorPrimary = params!!.colorBackground
+                paramsSelectItems.indexGroup = indexGroup
+
+                intent.putExtra(ActSelectItems.PARAMS_SELECT_ITEMS, paramsSelectItems)
+                startActivityForResult(intent, ActSelectItems.RESULT)
+//                val dlg = DlgSelectItems<JSItemFilterModel>(this@JSActListSelectFilter)
+//                dlg.show(
+//                    title = itemGroup.title,
+//                    dataSet = itemGroup.dataSet,
+//                    dataSetSelected = itemGroupSelected.dataSet,
+//                    multiple = itemGroup.multiple,
+//                    colorPrimary = params!!.colorBackground)
+//
+//                dlg.onItemsSelected { items ->
+//                    itemGroupSelected.dataSet = items
+//                    initItemsExists(ivItemExists, tvTitle, itemGroupSelected)
+//                }
             }
 
         llContainerBody.addView(view)
@@ -158,15 +175,42 @@ class JSActListSelectFilter : AppCompatActivity() {
         toobar.setNavigationOnClickListener {
             finish()
         }
-        toobar.setBackgroundColor(params!!.colorBackground)
-        toobar.setTitleTextColor(params!!.colorText)
+        lineToobar.setBackgroundColor(params!!.colorBackground)
+//        toobar.setBackgroundColor(params!!.colorBackground)
+//        toobar.setTitleTextColor(params!!.colorText)
     }
 
     private fun initBtnFinish() {
-        btnFinish.setBackgroundColor(params!!.colorBackground)
+        btnFinish.setTextColor(params!!.colorBackground)
+        lineBtnFinish.setBackgroundColor(params!!.colorBackground)
+
         btnFinish.setOnClickListener {
             Params.finishListener?.invoke(params!!)
             finish()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when {
+            requestCode == ActSelectItems.RESULT && resultCode == Activity.RESULT_OK -> {
+                val paramsSelectItems =
+                    data?.getSerializableExtra(ActSelectItems.PARAMS_SELECT_ITEMS) as ParamsSelectItems
+                getExtrateView(paramsSelectItems)
+                Params.finishListener?.invoke(params!!)
+            }
+        }
+    }
+
+    private fun getExtrateView(paramsSelectItems: ParamsSelectItems) {
+
+        val view = llContainerBody.getChildAt(paramsSelectItems.indexGroup)
+
+        val tvTitle = view.findViewById(R.id.tvDescriptionItemGroupSelectedLinear) as TextView
+        val ivItemExists = view.findViewById(R.id.ivItemExists) as ImageView
+        tvTitle.setTextColor(params!!.colorBackground)
+        params?.listDataSetFilterSelected!![paramsSelectItems.indexGroup].dataSet = paramsSelectItems.dataSetSelected
+
+        initItemsExists(ivItemExists, tvTitle, params?.listDataSetFilterSelected!![paramsSelectItems.indexGroup])
     }
 }

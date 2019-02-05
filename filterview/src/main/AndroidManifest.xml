@@ -5,8 +5,13 @@
     <application>
         <activity
                 android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+                android:configChanges="orientation|screenSize"
                 android:name=".view.JSActListSelectFilter">
         </activity>
+        <activity
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+                android:configChanges="orientation|screenSize"
+                android:name=".view.ActSelectItems"/>
     </application>
 
 </manifest>

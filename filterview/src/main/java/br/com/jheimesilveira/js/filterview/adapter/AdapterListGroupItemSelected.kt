@@ -126,23 +126,28 @@ class AdapterListGroupItemSelected(
         val item = dataSet[position - 1]
         holder.itemView.tvDescription.text = item.description
 
+        initShapeContainer(holder.itemView, item)
+        holder.itemView.llContainerRoot.setOnClickListener {
+            selectedItem(item)
+            notifyDataSetChanged()
+            changeListener?.invoke(selecteds)
+        }
+    }
+
+    private fun initShapeContainer(itemView: View, item: JSItemFilterModel) {
         val shape = GradientDrawable()
         shape.shape = GradientDrawable.RECTANGLE
-        shape.cornerRadius = 70f
+        shape.cornerRadius = 60f
         if (selecteds.contains(item)) {
             shape.setStroke(2, Color.TRANSPARENT)
             shape.setColor(colorPrimary)
-            holder.itemView.tvDescription.setTextColor(Color.WHITE)
+            itemView.tvDescription.setTextColor(Color.WHITE)
         } else {
             shape.setColor(Color.TRANSPARENT)
             shape.setStroke(2, colorPrimary)
-            holder.itemView.tvDescription.setTextColor(colorPrimary)
+            itemView.tvDescription.setTextColor(colorPrimary)
         }
-        holder.itemView.llContainerRoot.background = shape
-        holder.itemView.llContainerRoot.setOnClickListener {
-            selectedItem(item)
-            changeListener?.invoke(selecteds)
-        }
+        itemView.llContainerRoot.background = shape
     }
 
     private fun selectedItem(item: JSItemFilterModel) {
@@ -152,7 +157,6 @@ class AdapterListGroupItemSelected(
             if (!multiple) selecteds = ArrayList()
             selecteds.add(item)
         }
-        notifyDataSetChanged()
     }
 
 

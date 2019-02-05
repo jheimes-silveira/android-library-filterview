@@ -7,6 +7,10 @@ class JSItemFilterModel(
     var value: Any? = null,
     val group: Int? = null): Serializable {
 
+    override fun equals(other: Any?): Boolean {
+        return other == description
+    }
+
     override fun toString(): String {
         return description
     }

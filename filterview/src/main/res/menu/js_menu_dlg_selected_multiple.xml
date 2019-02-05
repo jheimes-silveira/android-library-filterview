@@ -5,13 +5,7 @@
         <item
                 app:showAsAction="always"
                 android:id="@+id/nav_selected_all"
-                android:icon="@drawable/check_box_outline"
-                android:title="Profissionais" />
-        <item
-                app:showAsAction="always"
-                android:id="@+id/nav_unselected_all"
-                android:icon="@drawable/checkbox_blank_outline"
-                android:title="Empresas" />
+                android:title="Selecionar totos"/>
     </group>
 
 </menu>

@@ -11,20 +11,32 @@
         android:layout_width="match_parent"
         android:layout_height="56dp">
     </android.support.v7.widget.Toolbar>
+    <View
+            android:id="@+id/lineToolbar"
+            android:layout_below="@id/toolbar"
+            android:background="@color/picton_blue"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
         <Button
                 android:layout_alignParentBottom="true"
-                android:textColor="@android:color/white"
+                android:textColor="@color/picton_blue"
                 android:id="@+id/btnApply"
                 android:text="aplicar"
                 android:foreground="?attr/selectableItemBackgroundBorderless"
                 android:layout_centerVertical="true"
-                android:background="@color/picton_blue"
+                android:padding="@dimen/padding_button_bootom"
+                android:background="@android:color/transparent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                />
+    <View
+            android:id="@+id/lineBtnApply"
+            android:layout_above="@id/btnApply"
+            android:background="@color/picton_blue"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvList"
-        android:layout_marginTop="16dp"
         android:layout_below="@id/toolbar"
         android:layout_above="@id/btnApply"
         android:layout_width="match_parent"

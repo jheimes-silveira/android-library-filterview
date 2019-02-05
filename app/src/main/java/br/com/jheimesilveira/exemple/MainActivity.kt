@@ -104,7 +104,6 @@ class MainActivity : AppCompatActivity() {
         model.add(JSItemFilterModel("Calças", 4))
         model.add(JSItemFilterModel("Clinelo", 5))
         model.add(JSItemFilterModel("Meias", 6))
-        model.add(JSItemFilterModel("Meias", 7))
         model.add(JSItemFilterModel("Poupão", 8))
         model.add(JSItemFilterModel("Kits", 9))
         model.add(JSItemFilterModel("Óculos", 10))
