@@ -10,6 +10,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:textSize="18dp"
+            android:textColor="@color/emperor"
             android:id="@+id/tvTitleItemGroupSelectedGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

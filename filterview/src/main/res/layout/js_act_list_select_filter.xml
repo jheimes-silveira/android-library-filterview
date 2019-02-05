@@ -5,9 +5,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <android.support.v7.widget.Toolbar
-            app:title="teste 39"
+            app:titleTextColor="@color/emperor"
             android:id="@+id/toobar"
-            app:navigationIcon="@drawable/js_close"
+            app:navigationIcon="@drawable/js_close_emperor"
             android:background="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="56dp">

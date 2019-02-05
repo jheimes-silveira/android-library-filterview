@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -167,7 +166,7 @@ class JSActListSelectFilter : AppCompatActivity() {
         if (params?.idDrawableIcon != null) {
             toobar.setNavigationIcon(params?.idDrawableIcon!!)
         } else {
-            toobar.setNavigationIcon(R.drawable.js_close)
+            toobar.setNavigationIcon(R.drawable.js_close_emperor)
         }
 
         toobar.title = params?.title

@@ -71,7 +71,7 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
         }
 
         dialogParams.idDrawableIcon = typedArray.getResourceId(
-            R.styleable.JSFilterView_js_dialog_icon_filter, R.drawable.js_close_silver)
+            R.styleable.JSFilterView_js_dialog_icon_filter, R.drawable.js_close_emperor)
 
         if (iconFilter == null) {
             ivFilter.setImageDrawable(resources.getDrawable(R.drawable.js_filter_variant))

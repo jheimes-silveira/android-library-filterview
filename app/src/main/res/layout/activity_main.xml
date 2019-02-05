@@ -14,12 +14,9 @@
         android:paddingLeft="12dp"
 
         app:js_dialog_background_color="@color/colorPrimary"
-        app:js_dialog_icon_filter="@drawable/js_close_silver"
+        app:js_dialog_icon_filter="@drawable/js_close_emperor"
         app:js_dialog_text="@string/filters"
-        app:js_dialog_text_color="@android:color/white"
         app:js_hint="@string/never_filter_apply"
-        app:js_hint_color="@android:color/black"
-        app:js_icon_filter="@drawable/js_filter_variant"
         />
 
     <LinearLayout
