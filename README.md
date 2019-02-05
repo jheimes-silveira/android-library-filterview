@@ -91,7 +91,7 @@ private fun getDataSetOrderBy(): ArrayList<JSItemFilterModel> {
 |:---|:---|:---|:---|
 | title | String |  `required` | Title of the filter group |
 | dataSet | JSItemFilterModel |  `required` | An array of objects of type JSItemFilterModel will be loaded where each item is an option of a suitable filter that can be selected |
-| type | enum | JSGroupFilterModel.Type.LINEAR | Defines the display mode of the component on the screen, where it supports: `LINEAR, GRID |
+| type | enum | JSGroupFilterModel.Type.LINEAR | Defines the display mode of the component on the screen, where it supports: `LINEAR, GRID` |
 | multiple | Boolean |  `false` | Defines if you can choose multiple filters belonging to the same group |
 
 #### how to use JSItemFilterModel
