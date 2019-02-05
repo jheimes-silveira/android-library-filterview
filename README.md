@@ -1,3 +1,6 @@
+
+[![](https://jitpack.io/v/jheimes-silveira/android-library-filterview.svg)](https://jitpack.io/#jheimes-silveira/android-library-filterview)
+
 # android-library-filterview
 
 #### A simple view to apply filters to your project.
