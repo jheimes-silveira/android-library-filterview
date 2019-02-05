@@ -3,14 +3,15 @@
 #### A simple view to apply filters to your project.
 
 <table>
-    <td><img src="previews/Screenshot_20190203-231743.png"></td>
-    <td><img src="previews/Screenshot_20190203-231750.png"></td>
-    <td><img src="previews/Screenshot_20190203-231810.png"></td>
+    <td><img src="previews/Screenshot_20190205-083022.png"></td>
+    <td><img src="previews/Screenshot_20190205-083027.png"></td>
+    <td><img src="previews/Screenshot_20190205-083055.png"></td>
 
 </table>
 <table>
-    <td><img src="previews/Screenshot_20190203-231829.png"></td>
-    <td><img src="previews/Screenshot_20190203-231836.png"></td>
+    <td><img src="previews/Screenshot_20190205-083106.png"></td>
+    <td><img src="previews/Screenshot_20190205-083110.png"></td>
+    <td><img src="previews/Screenshot_20190205-083135.png"></td>
 </table>
 
 ## Installation
