@@ -1,131 +1,25 @@
 package br.com.jheimesilveira.exemple
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import br.com.jheimesilveira.js.filterview.FilterView
-import br.com.jheimesilveira.js.filterview.dto.JSGroupFilterModel
-import br.com.jheimesilveira.js.filterview.dto.JSItemFilterModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var filterView: FilterView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initFilterview()
+        initButtons()
     }
 
-    private fun initFilterview() {
-        filterView = findViewById<FilterView>(R.id.filterView)
-
-        val models = ArrayList<JSGroupFilterModel>()
-
-        var model = JSGroupFilterModel("Ordenar por")
-        model.multiple = false
-        model.type = JSGroupFilterModel.Type.GRID
-        model.dataSet = getDataSetOrderBy()
-        models.add(model)
-
-        model = JSGroupFilterModel("Tipo de produto")
-        model.multiple = true
-        model.type = JSGroupFilterModel.Type.LINEAR
-        model.dataSet = getDataSetTypeProduct()
-        models.add(model)
-
-        model = JSGroupFilterModel("Gênero")
-        model.multiple = true
-        model.type = JSGroupFilterModel.Type.GRID
-        model.dataSet = getDataSetGenre()
-        models.add(model)
-
-        model = JSGroupFilterModel("Tamanho")
-        model.multiple = false
-        model.type = JSGroupFilterModel.Type.LINEAR
-        model.dataSet = getDataSetSize()
-        models.add(model)
-
-        /**
-         * Loads all Filter Models
-         * @param models Model
-         */
-        filterView.loadDataSetFilter(models)
-
-        filterView.loadDataSetFilterSelected(
-            // Index of the group to be Observed, where the index must be
-            // greater than zero and less than the maximum value of groups
-            indexGroup = 2
-        ) {
-            // In the function will be observed the group of filter options
-            // in groupFilter and the group of filters already selected in
-            // groupFilterSelected where you can edit the groupFilterSelected
-            // object to add or remove filters in your dataSet
-            groupFilter,
-            groupFilterSelected ->
-
-            //Returns to the function the new group of filters selected
-            groupFilterSelected
+    private fun initButtons() {
+        btnCidade.setOnClickListener {
+            startActivity(Intent(this@MainActivity, ActFilterCidade::class.java))
         }
 
-        /**
-         * Any changes made to the selected objects this method will be called
-         */
-        filterView.onChangeModelSelected { listDataSetFilter, listDataSetFilterSelected, dataSet ->
-            filterView.tvHint.text = "${dataSet.size} Filtro(s) aplicado(s)"
+        btnEstaticoMock.setOnClickListener {
+            startActivity(Intent(this@MainActivity, ActEstaticoMock::class.java))
         }
-    }
-
-    private fun getDataSetGenre(): ArrayList<JSItemFilterModel> {
-        val model = ArrayList<JSItemFilterModel>()
-        model.add(JSItemFilterModel("Mulher", 1))
-        model.add(JSItemFilterModel("Homem", 2))
-        model.add(JSItemFilterModel("Menino", 3))
-        model.add(JSItemFilterModel("Menina", 4))
-
-        return model
-    }
-
-    private fun getDataSetOrderBy(): ArrayList<JSItemFilterModel> {
-        val model = ArrayList<JSItemFilterModel>()
-        model.add(JSItemFilterModel("Menor preço", 1))
-        model.add(JSItemFilterModel("Maior preço", 2))
-        model.add(JSItemFilterModel("Oferta", 3))
-        model.add(JSItemFilterModel("Mais vendidos", 4))
-        model.add(JSItemFilterModel("Lançamanto", 5))
-
-        return model
-    }
-
-    private fun getDataSetTypeProduct(): ArrayList<JSItemFilterModel> {
-        val model = ArrayList<JSItemFilterModel>()
-        model.add(JSItemFilterModel("Acessórios", 1))
-        model.add(JSItemFilterModel("Bermudar", 2))
-        model.add(JSItemFilterModel("Biquinis", 3))
-        model.add(JSItemFilterModel("Calças", 4))
-        model.add(JSItemFilterModel("Clinelo", 5))
-        model.add(JSItemFilterModel("Meias", 6))
-        model.add(JSItemFilterModel("Poupão", 8))
-        model.add(JSItemFilterModel("Kits", 9))
-        model.add(JSItemFilterModel("Óculos", 10))
-        model.add(JSItemFilterModel("Natação", 11))
-        model.add(JSItemFilterModel("Regatas", 12))
-        model.add(JSItemFilterModel("Bermudas coloridas", 13))
-        model.add(JSItemFilterModel("Saias", 14))
-        model.add(JSItemFilterModel("Tenis", 15))
-        model.add(JSItemFilterModel("Bonés", 16))
-
-        return model
-    }
-
-    private fun getDataSetSize(): ArrayList<JSItemFilterModel> {
-        val model = ArrayList<JSItemFilterModel>()
-        model.add(JSItemFilterModel("GX", 1))
-        model.add(JSItemFilterModel("GG", 2))
-        model.add(JSItemFilterModel("G", 3))
-        model.add(JSItemFilterModel("M", 4))
-        model.add(JSItemFilterModel("N", 5))
-        model.add(JSItemFilterModel("P", 6))
-
-        return model
     }
 }

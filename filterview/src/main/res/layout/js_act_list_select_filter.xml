@@ -39,17 +39,25 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"/>
 
-    <ScrollView
-            android:layout_above="@id/btnFinish"
-            android:id="@+id/svContainerBody"
+    <android.support.v4.widget.SwipeRefreshLayout
             android:layout_below="@id/toobar"
+            android:layout_above="@id/lineBtnFinish"
+            android:id="@+id/swipe"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        <LinearLayout
-                android:orientation="vertical"
-                android:id="@+id/llContainerBody"
+            android:layout_height="match_parent"
+            android:defaultFocusHighlightEnabled="false">
+        <ScrollView
+                android:layout_above="@id/btnFinish"
+                android:id="@+id/svContainerBody"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-        </LinearLayout>
-    </ScrollView>
+                android:layout_height="match_parent">
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:id="@+id/llContainerBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </RelativeLayout>

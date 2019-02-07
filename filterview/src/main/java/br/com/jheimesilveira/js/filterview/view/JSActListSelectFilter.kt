@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import br.com.jheimesilveira.js.filterview.FilterView
 import br.com.jheimesilveira.js.filterview.R
 import br.com.jheimesilveira.js.filterview.adapter.AdapterListGroupItemSelected
 import br.com.jheimesilveira.js.filterview.dto.JSGroupFilterModel
@@ -19,13 +21,22 @@ import br.com.jheimesilveira.js.filterview.dto.ParamsSelectItems
 import br.com.jheimesilveira.js.filterview.util.Util
 import kotlinx.android.synthetic.main.js_act_list_select_filter.*
 
+
 class JSActListSelectFilter : AppCompatActivity() {
 
     companion object {
         const val PARAMS = "PARAMS"
+        private var showSwipper: ((show: Boolean) -> Unit)? = null
+
+        fun onShowSwipper(show: Boolean) {
+            showSwipper?.invoke(show)
+        }
     }
 
     var params: Params? = null
+
+
+    private var canCloseSwipper = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +49,38 @@ class JSActListSelectFilter : AppCompatActivity() {
         initToolbar()
         initLlContainerBody()
         initBtnFinish()
+        initSwipper()
+        onChangeDialogListener()
+    }
+
+    private fun onChangeDialogListener() {
+        Params.changeDialogListener = { params ->
+            this.params = params
+        }
+    }
+
+    private fun initSwipper() {
+        showSwipper = { show ->
+            if (swipe != null) {
+                swipe.isRefreshing = show
+            }
+            canCloseSwipper = !show
+            initLlContainerBody()
+        }
+
+        swipe.setOnRefreshListener {
+            if (canCloseSwipper) {
+                swipe.isRefreshing = false
+            }
+        }
     }
 
     private fun initLlContainerBody() {
+        if (llContainerBody == null
+            || params?.listDataSetFilter?.size != params?.listDataSetFilterSelected?.size) {
+            return
+        }
+
         llContainerBody.removeAllViews()
         for (itemGroup in params?.listDataSetFilter!!.withIndex()) {
             when (itemGroup.value.type) {
@@ -50,7 +90,7 @@ class JSActListSelectFilter : AppCompatActivity() {
                 }
                 JSGroupFilterModel.Type.GRID -> {
                     generateViewGrid(itemGroup.value,
-                        params!!.listDataSetFilterSelected[itemGroup.index])
+                        params!!.listDataSetFilterSelected[itemGroup.index], itemGroup.index)
                 }
                 JSGroupFilterModel.Type.PROGRESS -> {
                     generateViewProgress(itemGroup.value,
@@ -69,7 +109,9 @@ class JSActListSelectFilter : AppCompatActivity() {
 
     private fun generateViewGrid(
         itemGroup: JSGroupFilterModel,
-        itemGroupSelected: JSGroupFilterModel) {
+        itemGroupSelected: JSGroupFilterModel,
+        indexGroup: Int
+    ) {
 
         val view = LayoutInflater.from(this@JSActListSelectFilter)
             .inflate(R.layout.js_item_group_selected_grid, null, false)
@@ -92,7 +134,13 @@ class JSActListSelectFilter : AppCompatActivity() {
 
         adapterListSelected.onChangeListener { selecteds ->
             itemGroupSelected.dataSet = selecteds
-            Params.finishListener?.invoke(params!!)
+            Params.changeGroupSelected?.invoke(
+                indexGroup,
+                itemGroupSelected)
+        }
+
+        if (itemGroup.dataSet.size == 0) {
+            view.visibility = View.GONE
         }
 
         llContainerBody.addView(view)
@@ -110,7 +158,7 @@ class JSActListSelectFilter : AppCompatActivity() {
         val ivItemExists = view.findViewById(R.id.ivItemExists) as ImageView
         tvTitle.setTextColor(params!!.colorBackground)
 
-        initItemsExists(ivItemExists, tvTitle, itemGroupSelected)
+        initItemsExists(ivItemExists, tvTitle, itemGroupSelected, indexGroup)
 
         (view.findViewById(R.id.llContainerBodyItemGroupSelectedLinear) as LinearLayout)
             .setOnClickListener {
@@ -140,17 +188,27 @@ class JSActListSelectFilter : AppCompatActivity() {
 //                }
             }
 
+        if (itemGroup.dataSet.size == 0) {
+            view.visibility = View.GONE
+        }
+
         llContainerBody.addView(view)
     }
 
-    private fun initItemsExists(ivItemExists: ImageView, tvTitle: TextView, itemGroupSelected: JSGroupFilterModel) {
+    private fun initItemsExists(
+        ivItemExists: ImageView,
+        tvTitle: TextView,
+        itemGroupSelected: JSGroupFilterModel,
+        indexGroup: Int
+    ) {
         Util.loadTextView(tvTitle, getExtractItensSelected(itemGroupSelected.dataSet))
 
         if (itemGroupSelected.dataSet.size > 0) {
             ivItemExists.setImageDrawable(resources.getDrawable(R.drawable.js_close_silver))
             ivItemExists.setOnClickListener {
                 itemGroupSelected.dataSet = ArrayList()
-                initItemsExists(ivItemExists, tvTitle, itemGroupSelected)
+                initItemsExists(ivItemExists, tvTitle, itemGroupSelected, indexGroup)
+                Params.changeGroupSelected?.invoke(indexGroup, itemGroupSelected)
             }
             return
         }
@@ -172,6 +230,7 @@ class JSActListSelectFilter : AppCompatActivity() {
         toobar.title = params?.title
 
         toobar.setNavigationOnClickListener {
+            FilterView.finishActivity?.invoke()
             finish()
         }
         lineToobar.setBackgroundColor(params!!.colorBackground)
@@ -196,9 +255,16 @@ class JSActListSelectFilter : AppCompatActivity() {
                 val paramsSelectItems =
                     data?.getSerializableExtra(ActSelectItems.PARAMS_SELECT_ITEMS) as ParamsSelectItems
                 getExtrateView(paramsSelectItems)
-                Params.finishListener?.invoke(params!!)
+                Params.changeGroupSelected?.invoke(
+                    paramsSelectItems.dataSet[0].indexGroup!!,
+                    params?.listDataSetFilterSelected!![paramsSelectItems.indexGroup])
             }
         }
+    }
+
+    override fun onBackPressed() {
+        FilterView.finishActivity?.invoke()
+        finish()
     }
 
     private fun getExtrateView(paramsSelectItems: ParamsSelectItems) {
@@ -210,6 +276,13 @@ class JSActListSelectFilter : AppCompatActivity() {
         tvTitle.setTextColor(params!!.colorBackground)
         params?.listDataSetFilterSelected!![paramsSelectItems.indexGroup].dataSet = paramsSelectItems.dataSetSelected
 
-        initItemsExists(ivItemExists, tvTitle, params?.listDataSetFilterSelected!![paramsSelectItems.indexGroup])
+        initItemsExists(
+            ivItemExists,
+            tvTitle,
+            params?.listDataSetFilterSelected!![paramsSelectItems.indexGroup],
+            paramsSelectItems.indexGroup
+        )
+
+        Params.changeGroupSelected?.invoke(paramsSelectItems.indexGroup, params?.listDataSetFilterSelected!![paramsSelectItems.indexGroup])
     }
 }

@@ -5,7 +5,9 @@ import java.io.Serializable
 class JSItemFilterModel(
     var description: String,
     var value: Any? = null,
-    val group: Int? = null): Serializable {
+    var showInToobarSelected: Boolean = true,
+    val indexGroup: Int? = null,
+    val groupId: String? = null): Serializable {
 
     override fun equals(other: Any?): Boolean {
         return other == description

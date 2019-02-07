@@ -24,6 +24,19 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
     lateinit var ivFilter: ImageView
     lateinit var adapterListSelected: AdapterListSelected
 
+    private var clickFilter: (() -> Unit)? = null
+    private var changeGroupSelected: ((index: Int, jsGroupFilterModel: JSGroupFilterModel) -> Unit)? = null
+
+    var showViewitemsSelectedInFilter = true
+    set(value) {
+        field = value
+        setDataSetAdapterChip()
+    }
+
+    companion object {
+        var finishActivity: (() -> Unit)? = null
+    }
+
     var dialogBackgroundColor: Int = 0
     var dialogTextColor: Int = 0
 
@@ -33,10 +46,16 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
 
     private var dialogParams = Params()
 
-    private var changeModelSelected: (
-        (listDataSetFilter: ArrayList<JSGroupFilterModel>,
-         listDataSetFilterSelected: ArrayList<JSGroupFilterModel>,
-         dataSet: ArrayList<JSItemFilterModel>) -> Unit)? = null
+    fun onShowSwipper(show: Boolean) {
+        JSActListSelectFilter.onShowSwipper(show)
+    }
+
+    private var finishListener: (
+        (
+        listDataSetFilter: ArrayList<JSGroupFilterModel>,
+        listDataSetFilterSelected: ArrayList<JSGroupFilterModel>,
+        dataSet: ArrayList<JSItemFilterModel>
+    ) -> Unit)? = null
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.JSFilterView, 0, 0)
@@ -71,7 +90,8 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
         }
 
         dialogParams.idDrawableIcon = typedArray.getResourceId(
-            R.styleable.JSFilterView_js_dialog_icon_filter, R.drawable.js_close_emperor)
+            R.styleable.JSFilterView_js_dialog_icon_filter, R.drawable.js_close_emperor
+        )
 
         if (iconFilter == null) {
             ivFilter.setImageDrawable(resources.getDrawable(R.drawable.js_filter_variant))
@@ -82,6 +102,22 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
         typedArray.recycle()
         initIvFilter()
         initAdapter()
+        initResultActivity()
+    }
+
+    private fun initResultActivity() {
+        finishActivity = {
+
+            listDataSetFilterSelected.map { groupSelected ->
+                groupSelected.dataSet = ArrayList()
+            }
+
+            adapterListSelected.dataSet.map { item ->
+                listDataSetFilterSelected[item.indexGroup!!].dataSet.add(item)
+            }
+
+            setDataSetAdapterChip()
+        }
     }
 
     /**
@@ -91,14 +127,16 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
     fun loadDataSetFilter(models: ArrayList<JSGroupFilterModel>) {
         listDataSetFilter = ArrayList()
         listDataSetFilterSelected = ArrayList()
+
         for (i in models.withIndex()) {
             val jsItemFilterSelecteds = ArrayList<JSItemFilterModel>()
             for (j in i.value.dataSet.withIndex()) {
                 jsItemFilterSelecteds.add(
                     JSItemFilterModel(
-                        j.value.description,
-                        j.value.value,
-                        i.index
+                        description = j.value.description,
+                        value = j.value.value,
+                        indexGroup = i.index,
+                        groupId = i.value.id
                     )
                 )
             }
@@ -108,7 +146,8 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
                     i.value.title,
                     jsItemFilterSelecteds,
                     i.value.type,
-                    i.value.multiple
+                    i.value.multiple,
+                    id = i.value.id
                 )
             )
 
@@ -117,7 +156,8 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
                     i.value.title,
                     ArrayList(),
                     i.value.type,
-                    i.value.multiple
+                    i.value.multiple,
+                    i.value.id
                 )
             )
         }
@@ -125,7 +165,7 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
 
     fun loadDataSetFilterSelected(
         indexGroup: Int,
-        dataSetSelected:(
+        dataSetSelected: (
             groupFilter: JSGroupFilterModel,
             groupFilterSelected: JSGroupFilterModel
         ) -> JSGroupFilterModel
@@ -136,25 +176,38 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
 
         listDataSetFilterSelected[indexGroup] = dataSetSelected(
             listDataSetFilter[indexGroup],
-            listDataSetFilterSelected[indexGroup])
+            listDataSetFilterSelected[indexGroup]
+        )
 
         dialogParams.listDataSetFilterSelected = listDataSetFilterSelected
         dialogParams.listDataSetFilter = listDataSetFilter
         dialogParams.colorBackground = dialogBackgroundColor
         dialogParams.colorText = dialogTextColor
 
-        Params.finishListener?.invoke(dialogParams)
+        Params.changeDialogListener?.invoke(dialogParams)
     }
 
     /**
      * Any changes made to the selected objects this method will be called
      */
-    fun onChangeModelSelected(changeModelSelected: (
-        (listDataSetFilter: ArrayList<JSGroupFilterModel>,
-         listDataSetFilterSelected: ArrayList<JSGroupFilterModel>,
-         dataSet: ArrayList<JSItemFilterModel>) -> Unit)) {
+    fun onFinishListener(
+        finishListener: (
+            (
+            listDataSetFilter: ArrayList<JSGroupFilterModel>,
+            listDataSetFilterSelected: ArrayList<JSGroupFilterModel>,
+            dataSet: ArrayList<JSItemFilterModel>
+        ) -> Unit)
+    ) {
 
-        this.changeModelSelected = changeModelSelected
+        this.finishListener = finishListener
+    }
+
+    fun onChangeGroupSelected(changeGroupSelected: (index: Int, jsGroupFilterModel: JSGroupFilterModel) -> Unit) {
+        this.changeGroupSelected = changeGroupSelected
+    }
+
+    fun onClickFilter(clickFilter: () -> Unit) {
+        this.clickFilter = clickFilter
     }
 
     private fun initIvFilter() {
@@ -164,7 +217,11 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
             adapterListSelected.dataSet = getExtractFilter(listDataSetFilterSelected)
             setDataSetAdapterChip()
 
-            changeModelSelected?.invoke(listDataSetFilter, listDataSetFilterSelected, adapterListSelected.dataSet)
+            finishListener?.invoke(listDataSetFilter, listDataSetFilterSelected, adapterListSelected.dataSet)
+        }
+
+        Params.changeGroupSelected = { index, jsGroupFilterModel ->
+            changeGroupSelected?.invoke(index, jsGroupFilterModel)
         }
 
         ivFilter.setOnClickListener {
@@ -176,6 +233,7 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
 
             i.putExtra(JSActListSelectFilter.PARAMS, dialogParams)
             mContext.startActivity(i)
+            clickFilter?.invoke()
         }
     }
 
@@ -199,14 +257,19 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
         setDataSetAdapterChip(ArrayList())
 
         adapterListSelected.onChangeListener { item ->
-            listDataSetFilterSelected[item.group!!].dataSet.remove(item)
+            listDataSetFilterSelected[item.indexGroup!!].dataSet.remove(item)
             setDataSetAdapterChip()
-            changeModelSelected?.invoke(listDataSetFilter, listDataSetFilterSelected, adapterListSelected.dataSet)
+            changeGroupSelected?.invoke(item.indexGroup, listDataSetFilterSelected[item.indexGroup])
         }
     }
 
     private fun setDataSetAdapterChip(arrayList: ArrayList<JSItemFilterModel> = adapterListSelected.dataSet) {
-        if (arrayList.size == 0) rvListSelected.visibility = View.GONE else rvListSelected.visibility = View.VISIBLE
+        if (showViewitemsSelectedInFilter && arrayList.size != 0) {
+            rvListSelected.visibility = View.VISIBLE
+        } else {
+            rvListSelected.visibility = View.GONE
+        }
+
         adapterListSelected.update(arrayList)
     }
 

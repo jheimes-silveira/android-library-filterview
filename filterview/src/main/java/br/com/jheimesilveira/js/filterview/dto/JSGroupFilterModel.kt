@@ -6,7 +6,8 @@ class JSGroupFilterModel(
     var title: String,
     var dataSet: ArrayList<JSItemFilterModel> = ArrayList(),
     var type: Type = Type.LINEAR,
-    var multiple: Boolean = false
+    var multiple: Boolean = false,
+    var id: String? = null
 ) : Serializable {
 
     enum class Type constructor(val id: Int) {
