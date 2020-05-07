@@ -267,6 +267,13 @@ class JSActListSelectFilter : AppCompatActivity() {
         finish()
     }
 
+    override fun onDestroy() {
+        Params.changeDialogListener = null
+        Params.changeGroupSelected = null
+        Params.finishListener = null
+        super.onDestroy()
+    }
+
     private fun getExtrateView(paramsSelectItems: ParamsSelectItems) {
 
         val view = llContainerBody.getChildAt(paramsSelectItems.indexGroup)
