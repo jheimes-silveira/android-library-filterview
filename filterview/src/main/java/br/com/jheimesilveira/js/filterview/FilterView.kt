@@ -278,4 +278,11 @@ class FilterView @JvmOverloads constructor(var mContext: Context, attrs: Attribu
         rvListSelected = findViewById(R.id.rvListSelected)
         ivFilter = findViewById(R.id.ivFilter)
     }
+
+    override fun onDetachedFromWindow() {
+        Params.finishListener = null
+        Params.changeDialogListener = null
+        Params.changeGroupSelected = null
+        super.onDetachedFromWindow()
+    }
 }
